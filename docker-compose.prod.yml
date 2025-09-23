@@ -1,0 +1,22 @@
+# File: docker-compose.prod.yml
+
+version: '3.8'
+services:
+  nginx:
+    # Instead of 'build', we now use 'image'.
+    # These variables will be provided by our GitHub Actions workflow.
+    image: ${ACR_LOGIN_SERVER}/nginx:${TAG}
+    ports:
+      - "80:80"
+
+  frontend:
+    image: ${ACR_LOGIN_SERVER}/frontend:${TAG}
+  
+  data-api:
+    image: ${ACR_LOGIN_SERVER}/data-api:${TAG}
+
+  status-api:
+    image: ${ACR_LOGIN_SERVER}/status-api:${TAG}
+  
+  action-api:
+    image: ${ACR_LOGIN_SERVER}/action-api:${TAG}
