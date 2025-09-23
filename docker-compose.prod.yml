@@ -8,6 +8,11 @@ services:
     image: ${ACR_LOGIN_SERVER}/nginx:${TAG}
     ports:
       - "80:80"
+    depends_on:
+      - frontend
+      - data-api
+      - status-api
+      - action-api
 
   frontend:
     image: ${ACR_LOGIN_SERVER}/frontend:${TAG}
