@@ -1,0 +1,26 @@
+# File: docker-compose.deploy.yml
+
+version: '3.8'
+services:
+  nginx:
+    # We have hardcoded the tag. No more variables!
+    image: ${ACR_LOGIN_SERVER}/nginx:eada0bd
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - data-api
+      - status-api
+      - action-api
+
+  frontend:
+    image: ${ACR_LOGIN_SERVER}/frontend:d9acd43b94e1452919902554da94a49f9c71b2b5
+  
+  data-api:
+    image: ${ACR_LOGIN_SERVER}/data-api:d9acd43b94e1452919902554da94a49f9c71b2b5
+
+  status-api:
+    image: ${ACR_LOGIN_SERVER}/status-api:d9acd43b94e1452919902554da94a49f9c71b2b5
+  
+  action-api:
+    image: ${ACR_LOGIN_SERVER}/action-api:d9acd43b94e1452919902554da94a49f9c71b2b5

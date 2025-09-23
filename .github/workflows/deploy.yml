@@ -56,10 +56,9 @@ jobs:
           docker build -t $ACR/action-api:$TAG ./action-api
           docker push $ACR/action-api:$TAG
 
-      # Step 5: Deploys the application bundle.
-      # This step only sends the compose file. It does NOT update any settings.
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ secrets.WEBAPP_NAME }}
-          configuration-file: ./docker-compose.prod.yml
+          # CHANGE THIS LINE to use the new deploy file
+          configuration-file: ./docker-compose.deploy.yml
