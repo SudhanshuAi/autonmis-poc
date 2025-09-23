@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  nginx:
+    build: ./nginx
+    ports: [ "80:80" ]
+    depends_on: [frontend, data-api, status-api, action-api]
+
+  frontend:
+    build: ./frontend
+  
+  data-api:
+    build: ./data-api
+
+  status-api:
+    build: ./status-api
+  
+  action-api:
+    build: ./action-api
