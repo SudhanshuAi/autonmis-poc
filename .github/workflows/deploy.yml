@@ -56,15 +56,8 @@ jobs:
           docker build -t $ACR/action-api:$TAG ./action-api
           docker push $ACR/action-api:$TAG
 
-      # Step 5: Update the TAG in the Azure App Service configuration
-      - name: Set deployment tag in Azure
-        run: |
-          az webapp config appsettings set \
-            --resource-group autonmis-interactive-poc-rg \
-            --name ${{ secrets.WEBAPP_NAME }} \
-            --settings TAG=${{ github.sha }}
-
-      # Step 6: Deploy the application bundle (NO MORE app-settings-json)
+      # Step 5: Deploys the application bundle.
+      # This step only sends the compose file. It does NOT update any settings.
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
