@@ -66,9 +66,5 @@ jobs:
           # CHANGE THIS LINE to use the new production file
           configuration-file: ./docker-compose.prod.yml 
 
-          # ADD THIS SECTION to pass the variables to Azure
-          app-settings-json: |
-            {
-              "ACR_LOGIN_SERVER": "${{ secrets.ACR_LOGIN_SERVER }}",
-              "TAG": "${{ github.sha }}"
-            }
+          # This is the new, correct single-line format
+          app-settings-json: '{ "ACR_LOGIN_SERVER": "${{ secrets.ACR_LOGIN_SERVER }}", "TAG": "${{ github.sha }}" }'
