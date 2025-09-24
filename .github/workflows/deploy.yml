@@ -1,32 +1,23 @@
-# This is the name of your workflow, which you will see in the GitHub Actions tab.
+# FINAL, FULLY AUTOMATED WORKFLOW
+
 name: Deploy Interactive POC to Azure
 
-# This section defines WHEN the workflow should run.
 on:
-  # It triggers on any 'push' event to the 'main' branch.
   push:
     branches: [main]
 
-# This section defines the actual work to be done.
 jobs:
-  # We are defining a single job called 'deploy'.
   deploy:
-    # This job will run on a fresh virtual machine provided by GitHub, using the latest Ubuntu.
     runs-on: ubuntu-latest
-
-    # These are the individual steps the robot will take, in order.
     steps:
-      # Step 1: Checks out your repository's code onto the virtual machine.
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Logs into your Azure account using the secure JSON credential.
       - name: Login to Azure
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # Step 3: Logs into your private Azure Container Registry.
       - name: Login to Azure Container Registry
         uses: azure/docker-login@v1
         with:
@@ -34,31 +25,27 @@ jobs:
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
-      # Step 4: Builds every Dockerfile and pushes the resulting images to your ACR.
-      # Each image is tagged with a unique ID from the Git commit (github.sha).
       - name: Build and Push All Docker Images
         run: |
           TAG=${{ github.sha }}
           ACR=${{ secrets.ACR_LOGIN_SERVER }}
+          # ... (docker build and push commands for all services) ...
+          docker build -t $ACR/nginx:$TAG ./nginx && docker push $ACR/nginx:$TAG
+          docker build -t $ACR/frontend:$TAG ./frontend && docker push $ACR/frontend:$TAG
+          docker build -t $ACR/data-api:$TAG ./data-api && docker push $ACR/data-api:$TAG
+          docker build -t $ACR/status-api:$TAG ./status-api && docker push $ACR/status-api:$TAG
+          docker build -t $ACR/action-api:$TAG ./action-api && docker push $ACR/action-api:$TAG
 
-          docker build -t $ACR/nginx:$TAG ./nginx
-          docker push $ACR/nginx:$TAG
-
-          docker build -t $ACR/frontend:$TAG ./frontend
-          docker push $ACR/frontend:$TAG
-
-          docker build -t $ACR/data-api:$TAG ./data-api
-          docker push $ACR/data-api:$TAG
-
-          docker build -t $ACR/status-api:$TAG ./status-api
-          docker push $ACR/status-api:$TAG
-
-          docker build -t $ACR/action-api:$TAG ./action-api
-          docker push $ACR/action-api:$TAG
+      # THIS IS THE STEP WE ARE ADDING BACK IN. IT WILL NOW SUCCEED.
+      - name: Set deployment tag in Azure
+        run: |
+          az webapp config appsettings set \
+            --resource-group autonmis-interactive-poc-rg \
+            --name ${{ secrets.WEBAPP_NAME }} \
+            --settings TAG=${{ github.sha }}
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ secrets.WEBAPP_NAME }}
-          # CHANGE THIS LINE to use the new deploy file
-          configuration-file: ./docker-compose.deploy.yml
+          configuration-file: ./docker-compose.prod.yml

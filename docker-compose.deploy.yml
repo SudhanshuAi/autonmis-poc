@@ -4,7 +4,7 @@ version: '3.8'
 services:
   nginx:
     # We have hardcoded the tag. No more variables!
-    image: ${ACR_LOGIN_SERVER}/nginx:eada0bd
+    image: $autonmisiacrpoc.azurecr.io/nginx:11c483d7dbdfd9578b2303098531cb70534dd220
     ports:
       - "80:80"
     depends_on:
@@ -14,13 +14,13 @@ services:
       - action-api
 
   frontend:
-    image: ${ACR_LOGIN_SERVER}/frontend:d9acd43b94e1452919902554da94a49f9c71b2b5
+    image: $autonmisiacrpoc.azurecr.io/frontend:11c483d7dbdfd9578b2303098531cb70534dd220
   
   data-api:
-    image: ${ACR_LOGIN_SERVER}/data-api:d9acd43b94e1452919902554da94a49f9c71b2b5
+    image: $autonmisiacrpoc.azurecr.io/data-api:11c483d7dbdfd9578b2303098531cb70534dd220
 
   status-api:
-    image: ${ACR_LOGIN_SERVER}/status-api:d9acd43b94e1452919902554da94a49f9c71b2b5
+    image: $autonmisiacrpoc.azurecr.io/status-api:11c483d7dbdfd9578b2303098531cb70534dd220
   
   action-api:
-    image: ${ACR_LOGIN_SERVER}/action-api:d9acd43b94e1452919902554da94a49f9c71b2b5
+    image: $autonmisiacrpoc.azurecr.io/action-api:11c483d7dbdfd9578b2303098531cb70534dd220
