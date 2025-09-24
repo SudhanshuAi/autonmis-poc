@@ -1,5 +1,3 @@
-# FINAL, FULLY AUTOMATED WORKFLOW
-
 name: Deploy Interactive POC to Azure
 
 on:
@@ -29,18 +27,17 @@ jobs:
         run: |
           TAG=${{ github.sha }}
           ACR=${{ secrets.ACR_LOGIN_SERVER }}
-          # ... (docker build and push commands for all services) ...
           docker build -t $ACR/nginx:$TAG ./nginx && docker push $ACR/nginx:$TAG
           docker build -t $ACR/frontend:$TAG ./frontend && docker push $ACR/frontend:$TAG
           docker build -t $ACR/data-api:$TAG ./data-api && docker push $ACR/data-api:$TAG
           docker build -t $ACR/status-api:$TAG ./status-api && docker push $ACR/status-api:$TAG
           docker build -t $ACR/action-api:$TAG ./action-api && docker push $ACR/action-api:$TAG
 
-      # THIS IS THE STEP WE ARE ADDING BACK IN. IT WILL NOW SUCCEED.
+      # This step must use the correct resource group name
       - name: Set deployment tag in Azure
         run: |
           az webapp config appsettings set \
-            --resource-group autonmis-interactive-poc-rg \
+            --resource-group autonmis-poc-rg \
             --name ${{ secrets.WEBAPP_NAME }} \
             --settings TAG=${{ github.sha }}
 
