@@ -1,9 +1,20 @@
+# File: docker-compose.yml (for local development)
+
 version: '3.8'
 services:
+  # The Nginx proxy is our entrypoint
   nginx:
+    # This tells Docker to build the image from the ./nginx directory
     build: ./nginx
-    ports: [ "80:80" ]
-    depends_on: [frontend, data-api, status-api, action-api]
+    # This maps port 8080 on your computer to port 80 inside the container
+    ports:
+      - "8080:80"
+    # This ensures nginx starts last, after the services it depends on are ready
+    depends_on:
+      - frontend
+      - data-api
+      - status-api
+      - action-api
 
   frontend:
     build: ./frontend

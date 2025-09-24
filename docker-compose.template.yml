@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  nginx:
+    image: __ACR_LOGIN_SERVER__/nginx:__TAG__
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - data-api
+      - status-api
+      - action-api
+
+  frontend:
+    image: __ACR_LOGIN_SERVER__/frontend:__TAG__
+  
+  data-api:
+    image: __ACR_LOGIN_SERVER__/data-api:__TAG__
+
+  status-api:
+    image: __ACR_LOGIN_SERVER__/status-api:__TAG__
+  
+  action-api:
+    image: __ACR_LOGIN_SERVER__/action-api:__TAG__

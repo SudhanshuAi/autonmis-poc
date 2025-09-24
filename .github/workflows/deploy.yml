@@ -1,3 +1,5 @@
+# FINAL, FULLY AUTOMATED WORKFLOW
+
 name: Deploy Interactive POC to Azure
 
 on:
@@ -33,16 +35,20 @@ jobs:
           docker build -t $ACR/status-api:$TAG ./status-api && docker push $ACR/status-api:$TAG
           docker build -t $ACR/action-api:$TAG ./action-api && docker push $ACR/action-api:$TAG
 
-      # This step must use the correct resource group name
-      - name: Set deployment tag in Azure
+      # THIS IS THE NEW STEP THAT FIXES EVERYTHING
+      # It creates a hardcoded deploy file during the run.
+      - name: Generate Production Compose File
         run: |
-          az webapp config appsettings set \
-            --resource-group autonmis-poc-rg \
-            --name ${{ secrets.WEBAPP_NAME }} \
-            --settings TAG=${{ github.sha }}
+          # Copy the template to a new file that we will deploy
+          cp docker-compose.template.yml docker-compose.deploy.yml
+          
+          # Use the 'sed' command (a standard linux tool) to find and replace the placeholders
+          sed -i 's|__ACR_LOGIN_SERVER__|${{ secrets.ACR_LOGIN_SERVER }}|g' docker-compose.deploy.yml
+          sed -i 's|__TAG__|${{ github.sha }}|g' docker-compose.deploy.yml
 
+      # The final step now uses the newly generated, fully hardcoded file
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ secrets.WEBAPP_NAME }}
-          configuration-file: ./docker-compose.prod.yml
+          configuration-file: ./docker-compose.deploy.yml
