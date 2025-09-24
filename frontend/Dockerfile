@@ -1,3 +1,21 @@
-FROM nginx:alpine
-COPY ./index.html /usr/share/nginx/html/index.html
-EXPOSE 80
+# File: frontend/Dockerfile
+
+# Stage 1: Build the application
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+# Stage 2: Create the final, small production image
+FROM node:18-alpine
+WORKDIR /app
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/node_modules ./node_modules
+
+# Next.js runs on port 3000 by default
+EXPOSE 3000
+CMD ["npm", "start"]
