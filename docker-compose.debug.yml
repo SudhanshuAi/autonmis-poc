@@ -1,0 +1,13 @@
+# File: docker-compose.debug.yml
+
+version: '3.8'
+services:
+  # We are only running ONE service: the frontend.
+  frontend:
+    # We use the full, hardcoded image path to eliminate all variables.
+    # Replace 'eada0bd' with the commit ID of your last successful workflow run.
+    image: autonmisiacrpoc.azurecr.io/frontend:623b0a9198fe6554da0454b5e7af293df2fe9dc5
+    
+    # We are exposing its port directly to the internet for this test.
+    ports:
+      - "80:80"
